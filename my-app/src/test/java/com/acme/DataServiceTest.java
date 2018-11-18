@@ -1,12 +1,14 @@
 package com.acme;
 
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.marklogic.DatabaseClient;
+import com.marklogic.DatabaseClientFactory;
 
 public class DataServiceTest {
   @Test
   public void testRuleDefinitions() {
-    assertTrue(true);
+    DatabaseClient client = DatabaseClientFactory.newClient("localhost", 8003, "username", "password",
+        Authentication.DIGEST);
+    // HelloWorld.on();
   }
 }

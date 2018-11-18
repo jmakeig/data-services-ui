@@ -7,5 +7,5 @@
   "port" : 8099,
   "authentication" : "digest",
   "content-database" : "Documents",
-  "modules-database" : "Modules"
+  "modules-database" : "my-app-modules"
 }

@@ -53,17 +53,20 @@ const services = getServices();
     <meta charset="utf-8" />
     <title>Data Services</title>
     <link rel="stylesheet" type="text/css" href="endpoint.css" />
-    <!-- <script type="application/javascript" src=""></script> -->
+    <link rel="stylesheet" type="text/css" href="./lib/codemirror.css" />
+    <link rel="stylesheet" type="text/css" href="./editor.css" />
+    <script type="application/javascript" src="./lib/codemirror.js"></script>
+    <script type="application/javascript" src="./lib/javascript.js"></script>
   </head>
   <body>
-    <header><button>+ New Endpoint</button></header>
+    <header><button>+ New Service</button></header>
     ${Object.keys(services)
       .map(
         service =>
           `
     <section class="service" id="${service}">
       <h2 class="service-name">${service}</h2>
-      <header><button>+ New Function</button></header>
+      <header><button>+ New Endpoint</button></header>
       ${services[service].apis
         .map(
           api =>
@@ -89,13 +92,12 @@ const services = getServices();
               <span class="param-type">${param.datatype}</span>
             </li>
           `
-            )
-            .join('')
-          }
+              )
+              .join('')}
           </ol>
         </fieldset>
         <fieldset class="implementation">
-          <legend>Code</legend>
+          <legend>Endpoint Implementation</legend>
           <div class="control">
             <textarea
               class="module javascript"
@@ -119,6 +121,7 @@ const services = getServices();
     `
       )
       .join('')}
+    <script type="application/javascript" src="./editor.js"></script>
   </body>
 </html>
 `;

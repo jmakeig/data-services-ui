@@ -1,5 +1,7 @@
 xdmp.securityAssert('http://marklogic.com/data-services-console', 'execute');
 
+const { getServices } = require('./lib/modules-db.sjs');
+
 xdmp.setResponseOutputMethod('html');
 xdmp.setResponseContentType('text/html');
 xdmp.setResponseEncoding('UTF-8');
@@ -27,45 +29,7 @@ xdmp.setResponseEncoding('UTF-8');
 }
 */
 
-function getServices() {
-  function match(pattern) {
-    return Array.from(cts.uriMatch(pattern), uri => uri.valueOf());
-  }
-
-  return match('*/service.json').reduce((services, service) => {
-    const path = service.slice(0, service.length - 12);
-    const apis = match(`${path}*.api`).map(uri =>
-      Object.assign(cts.doc(uri).toObject(), {
-        module: cts.doc(uri.replace(/\.api$/, '.sjs')).toObject()
-      })
-    );
-    services[path.slice(1, path.length - 1)] = {
-      service: cts.doc(service).toObject(),
-      apis: [...apis]
-    };
-    return services;
-  }, {});
-}
-
-const services = {
-  helloWorld: {
-    service: {
-      endpointDirectory: '/helloWorld/',
-      $javaClass: 'com.acme.HelloWorld'
-    },
-    apis: [
-      {
-        functionName: 'whatsUp',
-        params: [
-          { name: 'greeting', datatype: 'string' },
-          { name: 'frequency', datatype: 'unsignedLong' }
-        ],
-        return: { datatype: 'string' },
-        module: `'Hello, world!`
-      }
-    ]
-  }
-}; //getServices();
+const services = getServices();
 
 `<!DOCTYPE html>
 <html lang="en">

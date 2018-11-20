@@ -1,0 +1,12 @@
+{
+  "role-name": "data-services-writer",
+  "description": "",
+  "role": ["rest-writer", "rest-extension-user"],
+  "privilege": [
+    {
+      "privilege-name": "data-services-console",
+      "action": "http://marklogic.com/data-services-console",
+      "kind": "execute"
+    }
+  ]
+}

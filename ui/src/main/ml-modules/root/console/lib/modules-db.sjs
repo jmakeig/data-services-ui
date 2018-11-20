@@ -31,8 +31,9 @@ function getServices() {
   }, {});
 }
 
+
 const opts = {
-  database: 'my-app-modules', // TODO: Externalize me
+  database: xdmp.modulesDatabase(),
   isolation: 'different-transaction'
 };
 

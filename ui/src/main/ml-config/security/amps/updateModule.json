@@ -1,0 +1,7 @@
+{
+  "namespace": "",
+  "local-name": "updateModule",
+  "document-uri": "/updateModule.sjs",
+  "modules-database": "data-services-ui-modules",
+  "role": ["rest-admin"]
+}

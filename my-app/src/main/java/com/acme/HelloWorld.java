@@ -33,7 +33,7 @@ public interface HelloWorld {
             public String whatsUp(String greeting, Long frequency) {
               return BaseProxy.StringType.toString(
                 baseProxy
-                .request("helloWorld.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS)
+                .request("whatsUp.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS)
                 .withSession()
                 .withParams(
                     BaseProxy.atomicParam("greeting", false, BaseProxy.StringType.fromString(greeting)),

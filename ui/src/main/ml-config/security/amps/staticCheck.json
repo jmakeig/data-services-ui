@@ -2,6 +2,6 @@
   "namespace": "",
   "local-name": "staticCheck",
   "document-uri": "/staticCheck.sjs",
-  "modules-database": "data-services-ui-modules",
+  "modules-database": "my-app-modules",
   "role": ["admin"]
 }

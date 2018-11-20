@@ -8,3 +8,16 @@ repositories {
     jcenter()
     // maven { url "http://repo.maven.apache.org/maven2" }
 }
+
+// https://github.com/marklogic-community/ml-gradle/blob/master/examples/use-modulesdb-project/build.gradle
+ext {
+    mlAppConfig {
+        modulesDatabaseName = "my-app-modules"
+    }
+
+    // Gotta tell ml-gradle not to delete the modules database when we undeploy this
+    mlAppDeployer.getCommand("DeployRestApiServersCommand").setDeleteModulesDatabase(false)
+
+    // Here's an example of not creating a REST API server at all - just remove the command
+    //mlAppDeployer.getCommands().remove(mlAppDeployer.getCommand("DeployRestApiServersCommand"))
+}

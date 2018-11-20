@@ -1,3 +1,5 @@
+xdmp.securityAssert('http://marklogic.com/data-services-console', 'execute');
+
 xdmp.setResponseOutputMethod('html');
 xdmp.setResponseContentType('text/html');
 xdmp.setResponseEncoding('UTF-8');
@@ -45,18 +47,36 @@ function getServices() {
   }, {});
 }
 
-const services = getServices();
+const services = {
+  helloWorld: {
+    service: {
+      endpointDirectory: '/helloWorld/',
+      $javaClass: 'com.acme.HelloWorld'
+    },
+    apis: [
+      {
+        functionName: 'whatsUp',
+        params: [
+          { name: 'greeting', datatype: 'string' },
+          { name: 'frequency', datatype: 'unsignedLong' }
+        ],
+        return: { datatype: 'string' },
+        module: `'Hello, world!`
+      }
+    ]
+  }
+}; //getServices();
 
 `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>Data Services</title>
-    <link rel="stylesheet" type="text/css" href="endpoint.css" />
-    <link rel="stylesheet" type="text/css" href="./lib/codemirror.css" />
-    <link rel="stylesheet" type="text/css" href="./editor.css" />
-    <script type="application/javascript" src="./lib/codemirror.js"></script>
-    <script type="application/javascript" src="./lib/javascript.js"></script>
+    <link rel="stylesheet" type="text/css" href="./browser/endpoint.css" />
+    <link rel="stylesheet" type="text/css" href="./browser/lib/codemirror.css" />
+    <link rel="stylesheet" type="text/css" href="./browser/editor.css" />
+    <script type="application/javascript" src="./browser/lib/codemirror.js"></script>
+    <script type="application/javascript" src="./browser/lib/javascript.js"></script>
   </head>
   <body>
     <header><button>+ New Service</button></header>
@@ -121,7 +141,7 @@ const services = getServices();
     `
       )
       .join('')}
-    <script type="application/javascript" src="./editor.js"></script>
+    <script type="application/javascript" src="./browser/editor.js"></script>
   </body>
 </html>
 `;

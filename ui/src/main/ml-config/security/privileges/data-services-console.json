@@ -1,0 +1,6 @@
+{
+  "privilege-name": "data-services-console",
+  "action": "http://marklogic.com/data-services-console",
+  "kind": "execute",
+  "role": ["data-services-writer"]
+}

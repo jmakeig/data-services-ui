@@ -1,0 +1,11 @@
+{
+  "server-name" : "data-services-ui",
+  "group-name" : "Default",
+  "server-type" : "http",
+  "enabled" : true,
+  "root" : "/",
+  "port" : 7099,
+  "authentication" : "digest",
+  "content-database" : "my-app-modules",
+  "modules-database" : "data-services-ui-modules"
+}

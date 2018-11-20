@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Data Services</title>
+    <link rel="stylesheet" type="text/css" href="endpoint.css" />
+    <!-- <script type="application/javascript" src=""></script> -->
+  </head>
+  <body>
+    <header><button>+ New Endpoint</button></header>
+    <section class="endpoint" id="HelloWorld">
+      <h2 class="endpoint-name">HelloWorld</h2>
+      <header><button>+ New Function</button></header>
+      <section class="function" id="HelloWorld-whatsUp">
+        <h3 class="function-name">whatsUp</h3>
+        <fieldset class="inputs">
+          <legend>Inputs</legend>
+          <div class="control input">
+            <label for="helloWorld-whatsUp-greeting">greeting</label>
+            <input
+              type="text"
+              name="greeting"
+              id="HelloWorld-whatsUp-greeting"
+              style="width: 20em;"
+            />
+          </div>
+          <div class="control input">
+            <label for="helloWorld-whatsUp-frequency">frequency</label>
+            <input
+              type="number"
+              name="frequency"
+              id="HelloWorld-whatsUp-frequency"
+            />
+          </div>
+        </fieldset>
+        <fieldset class="implementation">
+          <legend>Code</legend>
+          <div class="control">
+            <textarea
+              class="code javascript"
+              name="helloWorld-whatsUp-code"
+            ></textarea>
+          </div>
+        </fieldset>
+        <fieldset class="output">
+          <legend>Output</legend>
+          <div>asdf</div>
+        </fieldset>
+      </section>
+    </section>
+  </body>
+</html>

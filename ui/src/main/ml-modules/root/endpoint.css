@@ -1,0 +1,85 @@
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+body {
+  padding: 1em;
+
+  font-family: Helvetica, sans-serif;
+  line-height: 1.45;
+}
+
+textarea,
+input {
+  border: solid 1px #ddd;
+
+  font-size: 1em;
+}
+input[type=text],
+input[type=number] {
+  display: inline-block;
+
+  padding: 0.25em;
+}
+/**************************************************/
+section {
+  margin: 1em 0;
+}
+fieldset {
+  margin: 1em 0;
+
+  border: solid 1px #ccc;
+}
+fieldset .control {
+  margin: 1em 0;
+}
+ol.params-list {
+  padding-left: 0;
+
+  list-style-position: inside;
+}
+
+fieldset > legend {
+  padding: 0.25em;
+
+  font-weight: bold;
+}
+label[for] {
+  display: inline-block;
+
+  width: 8em;
+}
+textarea.module {
+  overflow: auto;
+
+  width: 100%;
+  height: 20em;
+  padding: 0.5em;
+
+  font-size: 1em;
+  line-height: 1.55;
+}
+
+textarea.module {
+  font-family: 'SF Mono', 'Inconsolata', 'Consolas', monospace;
+}
+
+.param-type:before {
+  content: '(';
+}
+.param-type:after {
+  content: ')';
+}

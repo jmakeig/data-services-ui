@@ -5,12 +5,15 @@ const editor = CodeMirror.fromTextArea(document.querySelector('textarea'), {
   inputStyle: 'contenteditable'
 });
 
-editor.on('change', change => {
-  // console.log(editor.getValue());
-  save(editor.getValue())
-    .then(response => console.info(response))
-    .catch(err => console.error(err));
-});
+editor.on(
+  'change',
+  debounce(change => {
+    // console.log(editor.getValue());
+    save(editor.getValue())
+      .then(response => console.info(response))
+      .catch(err => console.error(err));
+  })
+);
 
 function save(module) {
   return new Promise(function(resolve, reject) {
@@ -32,4 +35,21 @@ function save(module) {
     };
     xhr.send(module);
   });
+}
+
+/** @see https://davidwalsh.name/javascript-debounce-function */
+function debounce(func, wait = 250, immediate = false) {
+  let timeout;
+  return function _debounceInner() {
+    const context = this,
+      args = arguments;
+    function later() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    }
+    let callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
 }

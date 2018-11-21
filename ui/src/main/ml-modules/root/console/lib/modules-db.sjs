@@ -31,7 +31,6 @@ function getServices() {
   }, {});
 }
 
-
 const opts = {
   database: xdmp.modulesDatabase(),
   isolation: 'different-transaction'

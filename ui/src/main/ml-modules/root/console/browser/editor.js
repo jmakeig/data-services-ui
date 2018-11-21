@@ -6,9 +6,9 @@ const editor = CodeMirror.fromTextArea(document.querySelector('textarea'), {
 });
 
 editor.on('change', change => {
-  console.log(editor.getValue());
+  // console.log(editor.getValue());
   save(editor.getValue())
-    .then(() => console.info('Y'))
+    .then(response => console.info(response))
     .catch(err => console.error(err));
 });
 
@@ -19,7 +19,7 @@ function save(module) {
     xhr.onload = function() {
       if (this.status < 300) {
         // resolve(JSON.parse(this.responseText));
-        resolve();
+        resolve(this.responseText);
       } else if (this.status >= 300) {
         let error = new Error(this.responseText);
         error.httpStatus = this.statusText;

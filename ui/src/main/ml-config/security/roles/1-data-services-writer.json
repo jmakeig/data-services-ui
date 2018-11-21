@@ -7,6 +7,11 @@
       "privilege-name": "data-services-console",
       "action": "http://marklogic.com/data-services-console",
       "kind": "execute"
+    },
+    {
+      "privilege-name": "any-uri",
+      "action": "http://marklogic.com/xdmp/privileges/any-uri",
+      "kind": "execute"
     }
   ]
 }

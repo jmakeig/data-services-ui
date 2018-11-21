@@ -1,6 +1,6 @@
 xdmp.securityAssert('http://marklogic.com/data-services-console', 'execute');
 
-const { getServices } = require('./lib/modules-db.sjs');
+const { getServices } = require('./lib/getServices.sjs');
 
 xdmp.setResponseOutputMethod('html');
 xdmp.setResponseContentType('text/html');

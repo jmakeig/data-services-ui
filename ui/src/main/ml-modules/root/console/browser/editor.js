@@ -9,16 +9,50 @@ editor.on(
   'change',
   debounce(change => {
     // console.log(editor.getValue());
-    save(editor.getValue())
+    save(editor.getValue(), 'helloWorld', 'whatsUp', 'sjs')
       .then(response => console.info(response))
       .catch(err => console.error(err));
   })
 );
 
-function save(module) {
+/**
+ *
+ * @param {Object} params Dictionary of keys and values.
+ *                        Array values result in multiple entries.
+ */
+function queryString(params) {
+  const qs = new URLSearchParams();
+  function append(k, v) {
+    qs.append(k, v);
+  }
+  for (let p in params) {
+    if (Array.isArray(params[p])) {
+      for (const item of params[p]) {
+        append(p, item);
+      }
+    } else {
+      append(p, params[p]);
+    }
+  }
+  return qs.toString();
+}
+
+/**
+ *
+ *
+ * @param {String} module
+ * @param {String} service
+ * @param {String} endpoint
+ * @param {String} [tpye = 'sjs']
+ * @return {Promise}
+ */
+function save(module, service, endpoint, type = 'sjs') {
   return new Promise(function(resolve, reject) {
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', './saveEndpoint.sjs');
+    xhr.open(
+      'POST',
+      './saveEndpoint.sjs?' + queryString({ service, endpoint, type })
+    );
     xhr.onload = function() {
       if (this.status < 300) {
         // resolve(JSON.parse(this.responseText));

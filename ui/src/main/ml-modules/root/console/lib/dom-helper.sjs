@@ -51,6 +51,16 @@ function element(name, ...properties) {
     `</${name}>`
   );
 }
+exports.html = (...p) => {
+  xdmp.setResponseOutputMethod('html');
+  xdmp.setResponseContentType('text/html');
+  xdmp.setResponseEncoding('UTF-8');
+  return `<!DOCTYPE html>
+  ${element('html', ...p)}`;
+};
+exports.head = (...p) => element('head', ...p);
+exports.title = (...p) => element('title', ...p);
+exports.body = (...p) => element('body', ...p);
 exports.section = (...p) => element('section', ...p);
 exports.header = (...p) => element('header', ...p);
 exports.nav = (...p) => element('nav', ...p);
@@ -85,6 +95,7 @@ exports.em = (...p) => element('em', ...p);
 exports.strong = (...p) => element('strong', ...p);
 exports.mark = (...p) => element('mark', ...p);
 
+exports.form = (...p) => element('form', ...p);
 exports.fieldset = (...p) => element('fieldset', ...p);
 exports.legend = (...p) => element('legend', ...p);
 exports.label = (...p) => element('label', ...p);

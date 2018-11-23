@@ -10,6 +10,7 @@ const {
   ol,
   ul,
   li,
+  form,
   fieldset,
   legend,
   input,
@@ -55,7 +56,13 @@ function renderService(service, name) {
   return section(
     { class: 'service', id: service },
     a({ href: `dataServices.sjs?service=${name}` }, h2(name)),
-    header(button('+ New Endpoint')),
+    header(
+      form(
+        { method: 'get', action: `newEndpoint.sjs` },
+        input({ type: 'hidden', name: 'service', value: name }),
+        button({ type: 'submit' }, '+ New Endpoint')
+      )
+    ),
     ...service.apis.map(api => renderEndpoint(api, name))
   );
 }
@@ -156,8 +163,8 @@ function renderNav(services) {
   </head>
   <body>
     <header><button>+ New Service</button></header>
-    ${renderService(services[serviceName], serviceName)}
     ${renderNav(services)}
+    ${renderService(services[serviceName], serviceName)}
     <script type="application/javascript" src="./browser/editor.js"></script>
   </body>
 </html>

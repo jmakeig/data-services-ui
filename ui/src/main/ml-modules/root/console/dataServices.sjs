@@ -54,16 +54,16 @@ function renderService(service) {
     { class: 'service', id: service },
     a({ href: `dataServices.sjs?service=${service}` }, h2(service)),
     header(button('+ New Endpoint')),
-    ...services[service].apis.map(renderEndpoint)
+    ...services[service].apis.map(api => renderEndpoint(api, service))
   );
 }
 
-function renderEndpoint(api) {
+function renderEndpoint(api, forService) {
   return section(
     { class: 'endpoint', id: api.functionName },
     a(
       {
-        href: `dataServices.sjs?service=${'XXXXXXX'}&endpoint=${
+        href: `dataServices.sjs?service=${forService}&endpoint=${
           api.functionName
         }`
       },
@@ -71,7 +71,12 @@ function renderEndpoint(api) {
     ),
     fieldset(
       legend(api.functionName),
-      ol({ class: 'params-list', start: 0 }, ...api.params.map(renderParam))
+      ol(
+        { class: 'params-list', start: 0 },
+        ...api.params.map(param =>
+          renderParam(param, api.functionName, forService)
+        )
+      )
     ),
     fieldset(
       legend('Endpoint Implementation'),
@@ -91,11 +96,11 @@ function renderEndpoint(api) {
         button({ name: `${api.functionName}-name` }, 'Run!')
       )
     ),
-    fieldset(legend('Output'), div())
+    fieldset(legend('Output'), div('OUTPUT'))
   );
 }
 
-function renderParam(param) {
+function renderParam(param, forAPI, forService) {
   return li(
     { class: ['control', 'input'] },
     label({ for: param.name }, param.name),

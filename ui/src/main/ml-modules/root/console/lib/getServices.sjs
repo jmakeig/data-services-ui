@@ -2,15 +2,6 @@ xdmp.securityAssert('http://marklogic.com/data-services-console', 'execute');
 
 const { applyAs } = require('./util.sjs');
 
-// For exmaple, a better MarkLogic eval:
-// const evil = applyAs(
-//   eval, // Built-in eval
-//   {
-//     database: 'Documents',
-//     isolation: 'different-transaction'
-//   }
-// );
-
 function getServices() {
   function match(pattern) {
     return Array.from(cts.uriMatch(pattern), uri => uri.valueOf());

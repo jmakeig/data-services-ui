@@ -1,3 +1,5 @@
+store.subscribe(() => console.info(store.getState()));
+
 const editor = CodeMirror.fromTextArea(document.querySelector('textarea'), {
   mode: 'javascript',
   lineNumbers: true,
@@ -9,7 +11,7 @@ editor.on(
   'change',
   debounce(change => {
     // console.log(editor.getValue());
-    save(editor.getValue(), 'helloWorld', 'whatsUp', 'sjs')
+    save(editor.getValue(), 'helloWorld', 'whatsUp', 'sjs') // TODO: Get this out of the model
       .then(response => console.info(response))
       .catch(err => console.error(err));
   })

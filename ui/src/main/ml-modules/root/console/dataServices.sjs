@@ -2,11 +2,8 @@ xdmp.securityAssert('http://marklogic.com/data-services-console', 'execute');
 
 const { getServices } = require('./lib/getServices.sjs');
 
-xdmp.setResponseOutputMethod('html');
-xdmp.setResponseContentType('text/html');
-xdmp.setResponseEncoding('UTF-8');
-
-// const { div } = require('./dom-helper.sjs');
+const serviceName = xdmp.getRequestField('service');
+const endpointName = xdmp.getRequestField('endpoint');
 
 /*
 {
@@ -29,18 +26,29 @@ xdmp.setResponseEncoding('UTF-8');
 }
 */
 
+xdmp.setResponseOutputMethod('html');
+xdmp.setResponseContentType('text/html');
+xdmp.setResponseEncoding('UTF-8');
+
 const services = getServices();
 
 `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Data Services</title>
+    <title>Data Services: ${serviceName} > ${endpointName}</title>
     <link rel="stylesheet" type="text/css" href="./browser/endpoint.css" />
     <link rel="stylesheet" type="text/css" href="./browser/lib/codemirror.css" />
     <link rel="stylesheet" type="text/css" href="./browser/editor.css" />
+    <script type="application/javascript" src="./browser/lib/redux.min.js"></script>
     <script type="application/javascript" src="./browser/lib/codemirror.js"></script>
     <script type="application/javascript" src="./browser/lib/javascript.js"></script>
+    <script type="application/javascript">
+      const store = Redux.createStore(
+        state => state, 
+        ${JSON.stringify(services)}
+      );
+    </script>
   </head>
   <body>
     <header><button>+ New Service</button></header>

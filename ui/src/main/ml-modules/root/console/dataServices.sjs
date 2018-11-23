@@ -147,10 +147,11 @@ function renderNav(services) {
     <script type="application/javascript" src="./browser/lib/codemirror.js"></script>
     <script type="application/javascript" src="./browser/lib/javascript.js"></script>
     <script type="application/javascript">
-      const store = Redux.createStore(
-        state => state, 
-        ${JSON.stringify(services)}
-      );
+      const initialState = {
+        service: '${serviceName}',
+        endpoint: '${endpointName}',
+        services: ${JSON.stringify(services)}
+      };
     </script>
   </head>
   <body>

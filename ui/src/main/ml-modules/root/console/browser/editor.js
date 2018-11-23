@@ -1,3 +1,30 @@
+function copy(obj, ...others) {
+  return Object.assign({}, obj, ...others);
+}
+
+function reducer(prev, action) {
+  console.log(action.type, action.data);
+  switch (action.type) {
+    case 'CHANGE_ENDPOINT_MODULE':
+      const { service, endpoint, module } = action.data;
+      const newState = copy(prev);
+      newState.services = copy(newState.services);
+      newState.services[service] = copy(newState.services[service]);
+      newState.services[service].apis = newState.services[service].apis.map(
+        api => {
+          if (endpoint === api.functionName) {
+            return copy(api, { module });
+          } else {
+            return api;
+          }
+        }
+      );
+      return newState;
+    default:
+      return prev;
+  }
+}
+const store = Redux.createStore(reducer, initialState);
 store.subscribe(() => console.info(store.getState()));
 
 const editor = CodeMirror.fromTextArea(document.querySelector('textarea'), {
@@ -10,8 +37,19 @@ const editor = CodeMirror.fromTextArea(document.querySelector('textarea'), {
 editor.on(
   'change',
   debounce(change => {
+    const state = store.getState();
     // console.log(editor.getValue());
-    save(editor.getValue(), 'helloWorld', 'whatsUp', 'sjs') // TODO: Get this out of the model
+    store.dispatch({
+      type: 'CHANGE_ENDPOINT_MODULE',
+      data: {
+        service: state.service,
+        endpoint: state.endpoint,
+        module: editor.getValue()
+      }
+    });
+
+    // FIXME: This needs to be in a thunk
+    save(editor.getValue(), state.service, state.endpoint)
       .then(response => console.info(response))
       .catch(err => console.error(err));
   })

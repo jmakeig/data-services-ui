@@ -1,4 +1,7 @@
 function copy(obj, ...others) {
+  if (Array.isArray(obj)) {
+    return [...obj, ...others];
+  }
   return Object.assign({}, obj, ...others);
 }
 

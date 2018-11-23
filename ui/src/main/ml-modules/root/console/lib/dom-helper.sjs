@@ -29,7 +29,11 @@ function element(name, ...properties) {
       case 'string':
       case 'boolean':
       case 'number':
-        children.push(String(prop));
+        children.push(
+          String(prop)
+          //.replace(/</g, '&lt;')
+          //.replace('/&/g', '&amp;')
+        );
         break;
       case 'object':
         if (null !== prop) attributes = Object.assign(attributes, prop);
@@ -47,6 +51,7 @@ function element(name, ...properties) {
     `</${name}>`
   );
 }
+exports.section = (...p) => element('section', ...p);
 exports.header = (...p) => element('header', ...p);
 exports.nav = (...p) => element('nav', ...p);
 exports.footer = (...p) => element('footer', ...p);
@@ -80,6 +85,9 @@ exports.em = (...p) => element('em', ...p);
 exports.strong = (...p) => element('strong', ...p);
 exports.mark = (...p) => element('mark', ...p);
 
+exports.fieldset = (...p) => element('fieldset', ...p);
+exports.legend = (...p) => element('legend', ...p);
+exports.label = (...p) => element('label', ...p);
 exports.input = (...p) => element('input', { type: 'text' }, ...p);
 exports.button = (...p) => element('button', ...p);
 exports.text = (...p) => element('input', { type: 'text' }, ...p);

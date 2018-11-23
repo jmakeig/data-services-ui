@@ -1,5 +1,22 @@
 xdmp.securityAssert('http://marklogic.com/data-services-console', 'execute');
 
+const {
+  header,
+  section,
+  h2,
+  h3,
+  div,
+  ol,
+  li,
+  fieldset,
+  legend,
+  input,
+  button,
+  textarea,
+  label,
+  span,
+  a
+} = require('./lib/dom-helper.sjs');
 const { getServices } = require('./lib/getServices.sjs');
 
 const serviceName = xdmp.getRequestField('service');
@@ -32,6 +49,61 @@ xdmp.setResponseEncoding('UTF-8');
 
 const services = getServices();
 
+function renderService(service) {
+  return section(
+    { class: 'service', id: service },
+    a({ href: `dataServices.sjs?service=${service}` }, h2(service)),
+    header(button('+ New Endpoint')),
+    ...services[service].apis.map(renderEndpoint)
+  );
+}
+
+function renderEndpoint(api) {
+  return section(
+    { class: 'endpoint', id: api.functionName },
+    a(
+      {
+        href: `dataServices.sjs?service=${'XXXXXXX'}&endpoint=${
+          api.functionName
+        }`
+      },
+      h3(api.functionName)
+    ),
+    fieldset(
+      legend(api.functionName),
+      ol({ class: 'params-list', start: 0 }, ...api.params.map(renderParam))
+    ),
+    fieldset(
+      legend('Endpoint Implementation'),
+      div(
+        { class: 'control' },
+        textarea(
+          {
+            class: ['module javascript'],
+            name: `${api.functionName}-module`,
+            spellcheck: false
+          },
+          api.module
+        )
+      ),
+      div(
+        { class: 'control' },
+        button({ name: `${api.functionName}-name` }, 'Run!')
+      )
+    ),
+    fieldset(legend('Output'), div())
+  );
+}
+
+function renderParam(param) {
+  return li(
+    { class: ['control', 'input'] },
+    label({ for: param.name }, param.name),
+    input({ name: param.name, id: param.name, style: 'width: 20em;' }),
+    span({ class: ['param-type'] }, param.datatype)
+  );
+}
+
 `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -48,70 +120,13 @@ const services = getServices();
         state => state, 
         ${JSON.stringify(services)}
       );
+      // console.dir( ${JSON.stringify(services)});
     </script>
   </head>
   <body>
     <header><button>+ New Service</button></header>
     ${Object.keys(services)
-      .map(
-        service =>
-          `
-    <section class="service" id="${service}">
-      <h2 class="service-name">${service}</h2>
-      <header><button>+ New Endpoint</button></header>
-      ${services[service].apis
-        .map(
-          api =>
-            `
-      <section class="endpoint" id="${service}-${api.functionName}">
-        <h3 class="endpoint-name">${api.functionName}</h3>
-        <fieldset class="params">
-          <legend>Params</legend>
-          <ol class="params-list" start="0">
-            ${api.params
-              .map(
-                param => `
-            <li class="control input">
-              <label for="${service}-${api.functionName}-${param.name}">${
-                  param.name
-                }</label>
-              <input
-                type="text"
-                name="${api.functionName}"
-                id="${service}-${api.functionName}-${param.name}"
-                style="width: 20em;"
-              />
-              <span class="param-type">${param.datatype}</span>
-            </li>
-          `
-              )
-              .join('')}
-          </ol>
-        </fieldset>
-        <fieldset class="implementation">
-          <legend>Endpoint Implementation</legend>
-          <div class="control">
-            <textarea
-              class="module javascript"
-              name="${service}-${api.functionName}-module"
-              spellcheck="false"
-            >${api.module}</textarea>
-          </div>
-          <div class="control">
-              <button name="${service}-${api.functionName}-run">Run</button>
-          </div>
-        </fieldset>
-        <fieldset class="output">
-          <legend>Output</legend>
-          <div>asdf</div>
-        </fieldset>
-      </section>
-      `
-        )
-        .join('')}
-    </section>
-    `
-      )
+      .map(renderService)
       .join('')}
     <script type="application/javascript" src="./browser/editor.js"></script>
   </body>

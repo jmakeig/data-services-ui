@@ -7,10 +7,10 @@ function reducer(prev, action) {
   switch (action.type) {
     case 'CHANGE_ENDPOINT_MODULE':
       const { service, endpoint, module } = action.data;
-      const newState = copy(prev);
-      newState.services = copy(newState.services);
-      newState.services[service] = copy(newState.services[service]);
-      newState.services[service].apis = newState.services[service].apis.map(
+      const newModel = copy(prev);
+      newModel.services = copy(newModel.services);
+      newModel.services[service] = copy(newModel.services[service]);
+      newModel.services[service].apis = newModel.services[service].apis.map(
         api => {
           if (endpoint === api.functionName) {
             return copy(api, { module });
@@ -19,12 +19,12 @@ function reducer(prev, action) {
           }
         }
       );
-      return newState;
+      return newModel;
     default:
       return prev;
   }
 }
-const store = Redux.createStore(reducer, initialState);
+const store = Redux.createStore(reducer, initialModel);
 store.subscribe(() => console.info(store.getState()));
 
 const editor = CodeMirror.fromTextArea(document.querySelector('textarea'), {

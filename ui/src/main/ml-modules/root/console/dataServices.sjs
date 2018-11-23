@@ -2,11 +2,13 @@ xdmp.securityAssert('http://marklogic.com/data-services-console', 'execute');
 
 const {
   header,
+  nav,
   section,
   h2,
   h3,
   div,
   ol,
+  ul,
   li,
   fieldset,
   legend,
@@ -49,12 +51,12 @@ xdmp.setResponseEncoding('UTF-8');
 
 const services = getServices();
 
-function renderService(service) {
+function renderService(service, name) {
   return section(
     { class: 'service', id: service },
-    a({ href: `dataServices.sjs?service=${service}` }, h2(service)),
+    a({ href: `dataServices.sjs?service=${name}` }, h2(name)),
     header(button('+ New Endpoint')),
-    ...services[service].apis.map(api => renderEndpoint(api, service))
+    ...service.apis.map(api => renderEndpoint(api, name))
   );
 }
 
@@ -109,11 +111,35 @@ function renderParam(param, forAPI, forService) {
   );
 }
 
+function renderNav(services) {
+  function url(s, e) {
+    const u = `dataServices.sjs?service=${s}`;
+    if (!e) return u;
+    return `${u}&endpoint=${e}`;
+  }
+  return nav(
+    ul(
+      ...Object.keys(services).map(service =>
+        li(
+          a({ href: url(service) }, service),
+          ul(
+            ...services[service].apis.map(api =>
+              li(a({ href: url(service, api.functionName) }, api.functionName))
+            )
+          )
+        )
+      )
+    )
+  );
+}
+
 `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Data Services: ${serviceName} > ${endpointName}</title>
+    <title>Data Services: ${serviceName}${
+  endpointName ? ` > ${endpointName}` : ''
+}</title>
     <link rel="stylesheet" type="text/css" href="./browser/endpoint.css" />
     <link rel="stylesheet" type="text/css" href="./browser/lib/codemirror.css" />
     <link rel="stylesheet" type="text/css" href="./browser/editor.css" />
@@ -125,14 +151,12 @@ function renderParam(param, forAPI, forService) {
         state => state, 
         ${JSON.stringify(services)}
       );
-      // console.dir( ${JSON.stringify(services)});
     </script>
   </head>
   <body>
     <header><button>+ New Service</button></header>
-    ${Object.keys(services)
-      .map(renderService)
-      .join('')}
+    ${renderService(services[serviceName], serviceName)}
+    ${renderNav(services)}
     <script type="application/javascript" src="./browser/editor.js"></script>
   </body>
 </html>

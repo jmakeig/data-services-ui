@@ -86,16 +86,7 @@ function reducer(prev, action) {
   }
 }
 const store = Redux.createStore(reducer, initialModel);
-store.subscribe(() =>
-  replaceChildren(
-    document.querySelector(`#${store.getState().endpoint}`),
-    Endpoint(
-      selectCurrentEndpoint(store.getState()),
-      store.getState().service,
-      true
-    )
-  )
-);
+store.subscribe(render);
 
 /**
  * Given the state, get the current endpoint
@@ -114,37 +105,39 @@ function selectCurrentEndpoint(state) {
   throw new ReferenceError(`${service}, ${endpoint} does not exist`);
 }
 
-const editor = CodeMirror.fromTextArea(document.querySelector('textarea'), {
-  mode: 'javascript',
-  lineNumbers: true,
-  tabSize: 2,
-  inputStyle: 'contenteditable'
-});
+function wireModuleEditor() {
+  const editor = CodeMirror.fromTextArea(document.querySelector('textarea'), {
+    mode: 'javascript',
+    lineNumbers: true,
+    tabSize: 2,
+    inputStyle: 'contenteditable'
+  });
 
-editor.on(
-  'change',
-  debounce(change => {
-    const state = store.getState();
-    // console.log(editor.getValue());
-    store.dispatch({
-      type: CHANGE_ENDPOINT_MODULE,
-      data: {
-        service: state.service,
-        endpoint: state.endpoint,
-        module: editor.getValue()
-      }
-    });
+  editor.on(
+    'change',
+    debounce(change => {
+      const state = store.getState();
+      // console.log(editor.getValue());
+      store.dispatch({
+        type: CHANGE_ENDPOINT_MODULE,
+        data: {
+          service: state.service,
+          endpoint: state.endpoint,
+          module: editor.getValue()
+        }
+      });
 
-    // FIXME: This needs to be in a thunk
-    save(
-      selectCurrentEndpoint(store.getState()).module,
-      state.service,
-      state.endpoint
-    )
-      .then(response => console.info(response))
-      .catch(err => console.error(err));
-  })
-);
+      // FIXME: This needs to be in a thunk
+      save(
+        selectCurrentEndpoint(store.getState()).module,
+        state.service,
+        state.endpoint
+      )
+        .then(response => console.info(response))
+        .catch(err => console.error(err));
+    })
+  );
+}
 
 /**
  *
@@ -226,3 +219,21 @@ document.addEventListener('click', evt => {
     store.dispatch({ type: ADD_ENDPOINT_PARAM });
   }
 });
+
+function render(element = `#${store.getState().endpoint}`) {
+  console.time('render');
+  {
+    replaceChildren(
+      document.querySelector(element),
+      Endpoint(
+        selectCurrentEndpoint(store.getState()),
+        store.getState().service,
+        true
+      )
+    );
+    wireModuleEditor();
+  }
+  console.timeEnd('render');
+}
+
+wireModuleEditor();

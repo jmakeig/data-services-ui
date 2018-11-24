@@ -59,6 +59,7 @@ function Endpoint(api, forService, isSelected) {
 
 function Params(params, forAPI, forService) {
   return fieldset(
+    { id: `Params-${forService}-${forAPI}` },
     legend('Input Params'),
     ol(
       { class: 'params-list', start: 0 },
@@ -74,9 +75,11 @@ function Params(params, forAPI, forService) {
 function Param(param, forAPI, forService) {
   return li(
     { class: ['control', 'input'] },
-    label({ for: param.name }, param.name),
+    null === param.name ? input() : label({ for: param.name }, param.name),
     input({ name: param.name, id: param.name, style: 'width: 20em;' }),
-    span({ class: ['param-type'] }, param.datatype),
+    null === param.datatype
+      ? input()
+      : span({ class: ['param-type'] }, param.datatype),
     // button({ class: ['parm-edit'], title: 'Delete param' }, '✐'),
     button(
       {

@@ -18,15 +18,7 @@ function Service(service, name, selectedEndpoint) {
 function Endpoint(api, forService, isSelected) {
   const guts = isSelected
     ? [
-        fieldset(
-          legend('Input Params'),
-          ol(
-            { class: 'params-list', start: 0 },
-            ...api.params.map(param =>
-              Param(param, api.functionName, forService)
-            )
-          )
-        ),
+        Params(api.params, api.functionName, forService),
         fieldset(
           legend('Endpoint Implementation'),
           div(
@@ -65,12 +57,34 @@ function Endpoint(api, forService, isSelected) {
   );
 }
 
+function Params(params, forAPI, forService) {
+  return fieldset(
+    legend('Input Params'),
+    ol(
+      { class: 'params-list', start: 0 },
+      ...params.map(param => Param(param, forAPI, forService))
+    ),
+    div(
+      { class: 'control' },
+      button({ class: ['param-add'], title: 'Add parameter' }, '+')
+    )
+  );
+}
+
 function Param(param, forAPI, forService) {
   return li(
     { class: ['control', 'input'] },
     label({ for: param.name }, param.name),
     input({ name: param.name, id: param.name, style: 'width: 20em;' }),
-    span({ class: ['param-type'] }, param.datatype)
+    span({ class: ['param-type'] }, param.datatype),
+    // button({ class: ['parm-edit'], title: 'Delete param' }, '✐'),
+    button(
+      {
+        class: ['param-remove'],
+        title: 'Delete param'
+      },
+      '-'
+    )
   );
 }
 

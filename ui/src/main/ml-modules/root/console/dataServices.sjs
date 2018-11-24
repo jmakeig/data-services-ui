@@ -31,27 +31,6 @@ const { getServices } = require('./lib/getServices.sjs');
 const serviceName = xdmp.getRequestField('service');
 const endpointName = xdmp.getRequestField('endpoint');
 
-/*
-{
-  helloWorld: {
-    service: {
-      endpointDirectory: '/helloWorld/',
-      $javaClass: 'com.acme.HelloWorld'
-    },
-    apis: [
-      {
-        functionName: 'whatsUp',
-        params: [
-          { name: 'greeting', datatype: 'string' },
-          { name: 'frequency', datatype: 'unsignedLong' }
-        ],
-        return: { datatype: 'string' }
-      }
-    ]
-  }
-}
-*/
-
 xdmp.setResponseOutputMethod('html');
 xdmp.setResponseContentType('text/html');
 xdmp.setResponseEncoding('UTF-8');
@@ -71,6 +50,8 @@ const services = getServices();
     <script type="application/javascript" src="./browser/lib/redux.min.js"></script>
     <script type="application/javascript" src="./browser/lib/codemirror.js"></script>
     <script type="application/javascript" src="./browser/lib/javascript.js"></script>
+    <script type="application/javascript" src="./browser/lib/dom-helper.js"></script>
+    <script type="application/javascript" src="./components/components.js"></script>
     <script type="application/javascript">
       const initialModel = {
         service: '${serviceName}',

@@ -5,30 +5,114 @@ function copy(obj, ...others) {
   return Object.assign({}, obj, ...others);
 }
 
-function reducer(prev, action) {
-  console.log(action.type, action.data);
-  switch (action.type) {
-    case 'CHANGE_ENDPOINT_MODULE':
-      const { service, endpoint, module } = action.data;
-      const newModel = copy(prev);
-      newModel.services = copy(newModel.services);
-      newModel.services[service] = copy(newModel.services[service]);
-      newModel.services[service].apis = newModel.services[service].apis.map(
-        api => {
-          if (endpoint === api.functionName) {
-            return copy(api, { module });
-          } else {
-            return api;
+const CHANGE_ENDPOINT_MODULE = 'CHANGE_ENDPOINT_MODULE';
+const ADD_ENDPOINT_PARAM = 'ADD_ENDPOINT_PARAM';
+const UPDATE_ENDPOINT_PARAM = 'UPDATE_ENDPOINT_PARAM';
+const DELETE_ENDPOINT_PARAM = 'DELETE_ENDPOINT_PARAM';
+
+/*
+const model = {
+  service: 'helloWorld',
+  endpoint: 'whatsUp',
+  services: [
+    {
+      helloWorld: {
+        service: {
+          endpointDirectory: '/helloWorld/',
+          $javaClass: 'com.acme.HelloWorld'
+        },
+        apis: [
+          {
+            functionName: 'whatsUp',
+            params: [
+              { name: 'greeting', datatype: 'string' },
+              { name: 'frequency', datatype: 'unsignedLong' }
+            ],
+            return: { datatype: 'string' },
+            module: '\'use static\'';
           }
+        ]
+      }
+    }
+  ]
+};
+*/
+
+function reducer(prev, action) {
+  // console.log(action.type, action.data);
+  function changeEndpointModule({ service, endpoint, module }) {
+    const newModel = copy(prev);
+    newModel.services = copy(newModel.services);
+    newModel.services[service] = copy(newModel.services[service]);
+    newModel.services[service].apis = newModel.services[service].apis.map(
+      api => {
+        if (endpoint === api.functionName) {
+          return copy(api, { module });
+        } else {
+          return api;
         }
-      );
-      return newModel;
+      }
+    );
+    return newModel;
+  }
+
+  function addEndpointParam(service, endpoint) {
+    const newModel = copy(prev);
+    newModel.services = copy(newModel.services);
+    newModel.services[service] = copy(newModel.services[service]);
+    newModel.services[service].apis = newModel.services[service].apis.map(
+      api => {
+        if (endpoint === api.functionName) {
+          const newAPI = copy(api);
+          newAPI.params = copy(newAPI.params, [{ name: null, datatype: null }]);
+          return newAPI;
+        } else {
+          return api;
+        }
+      }
+    );
+    return newModel;
+  }
+
+  switch (action.type) {
+    case CHANGE_ENDPOINT_MODULE: {
+      return changeEndpointModule(action.data);
+    }
+    case ADD_ENDPOINT_PARAM:
+      return addEndpointParam(prev.service, prev.endpoint);
+      return prev;
     default:
       return prev;
   }
 }
 const store = Redux.createStore(reducer, initialModel);
-store.subscribe(() => console.info(store.getState()));
+store.subscribe(() =>
+  replaceChildren(
+    document.querySelector(`#${store.getState().endpoint}`),
+    Endpoint(
+      selectCurrentEndpoint(store.getState()),
+      store.getState().service,
+      true
+    )
+  )
+);
+
+/**
+ * Given the state, get the current endpoint
+ *
+ * @param {Object} state
+ * @return {Object} The endpoint
+ * @throws {ReferenceError} If the service or endpoint don’t exist
+ */
+function selectCurrentEndpoint(state) {
+  const { service, endpoint } = state;
+  const s = state.services[service];
+  if (s) {
+    const e = s.apis.find(api => endpoint === api.functionName);
+    if (e) return e;
+  }
+  throw new ReferenceError(`${service}, ${endpoint} does not exist`);
+}
 
 const editor = CodeMirror.fromTextArea(document.querySelector('textarea'), {
   mode: 'javascript',
@@ -43,7 +127,7 @@ editor.on(
     const state = store.getState();
     // console.log(editor.getValue());
     store.dispatch({
-      type: 'CHANGE_ENDPOINT_MODULE',
+      type: CHANGE_ENDPOINT_MODULE,
       data: {
         service: state.service,
         endpoint: state.endpoint,
@@ -52,7 +136,11 @@ editor.on(
     });
 
     // FIXME: This needs to be in a thunk
-    save(editor.getValue(), state.service, state.endpoint)
+    save(
+      selectCurrentEndpoint(store.getState()).module,
+      state.service,
+      state.endpoint
+    )
       .then(response => console.info(response))
       .catch(err => console.error(err));
   })
@@ -130,3 +218,11 @@ function debounce(func, wait = 250, immediate = false) {
     if (callNow) func.apply(context, args);
   };
 }
+
+document.addEventListener('click', evt => {
+  if (evt.target.matches('button.param-remove')) {
+    //
+  } else if (evt.target.matches('button.param-add')) {
+    store.dispatch({ type: ADD_ENDPOINT_PARAM });
+  }
+});

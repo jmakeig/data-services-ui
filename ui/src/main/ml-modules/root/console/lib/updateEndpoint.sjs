@@ -2,14 +2,11 @@ const { applyAs } = require('./util.sjs');
 
 function updateEndpoint(forService, endpoint, code = 'DEFAULT') {
   declareUpdate();
-  xdmp.documentInsert(
-    `/${forService}/${endpoint.functionName}.api`,
-    xdmp.toJSON(endpoint)
-  );
-  xdmp.documentInsert(
-    `/${forService}/${endpoint.functionName}.sjs`,
-    xdmp.toJSON(String(code))
-  );
+  const apiURI = `/${forService}/${endpoint.functionName}.api`;
+  xdmp.documentInsert(apiURI, xdmp.toJSON(endpoint));
+  const moduleURI = `/${forService}/${endpoint.functionName}.sjs`;
+  xdmp.documentInsert(moduleURI, xdmp.toJSON(String(code)));
+  return [apiURI, moduleURI];
 }
 
 const opts = {

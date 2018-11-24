@@ -23,7 +23,7 @@ const {
   label,
   span,
   a
-} = require('../lib/dom-helper.sjs');
+} = require('./lib/dom-helper.sjs');
 
 const { Nav, Service } = require('./components/components.js');
 const { getServices } = require('./lib/getServices.sjs');
@@ -82,7 +82,7 @@ const services = getServices();
   <body>
     <header><button>+ New Service</button></header>
     ${Nav(services)}
-    ${Service(services[serviceName], serviceName)}
+    ${Service(services[serviceName], serviceName, endpointName)}
     <script type="application/javascript" src="./browser/editor.js"></script>
   </body>
 </html>

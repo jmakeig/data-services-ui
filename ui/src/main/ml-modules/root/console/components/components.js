@@ -1,5 +1,4 @@
-
-function Service(service, name) {
+function Service(service, name, selectedEndpoint) {
   return section(
     { class: 'service', id: service },
     a({ href: `dataServices.sjs?service=${name}` }, h2(name)),
@@ -10,11 +9,45 @@ function Service(service, name) {
         button({ type: 'submit' }, '+ New Endpoint')
       )
     ),
-    ...service.apis.map(api => Endpoint(api, name))
+    ...service.apis.map(api =>
+      Endpoint(api, name, selectedEndpoint === api.functionName)
+    )
   );
 }
 
-function Endpoint(api, forService) {
+function Endpoint(api, forService, isSelected) {
+  const guts = isSelected
+    ? [
+        fieldset(
+          legend('Input Params'),
+          ol(
+            { class: 'params-list', start: 0 },
+            ...api.params.map(param =>
+              Param(param, api.functionName, forService)
+            )
+          )
+        ),
+        fieldset(
+          legend('Endpoint Implementation'),
+          div(
+            { class: 'control' },
+            textarea(
+              {
+                class: ['module', 'javascript'],
+                name: `${api.functionName}-module`,
+                spellcheck: false
+              },
+              api.module
+            )
+          ),
+          div(
+            { class: 'control' },
+            button({ name: `${api.functionName}-name` }, 'Run!')
+          )
+        ),
+        fieldset(legend('Output'), div('OUTPUT'))
+      ]
+    : [];
   return section(
     { class: 'endpoint', id: api.functionName },
     a(
@@ -25,32 +58,7 @@ function Endpoint(api, forService) {
       },
       h3(api.functionName)
     ),
-    fieldset(
-      legend(api.functionName),
-      ol(
-        { class: 'params-list', start: 0 },
-        ...api.params.map(param => Param(param, api.functionName, forService))
-      )
-    ),
-    fieldset(
-      legend('Endpoint Implementation'),
-      div(
-        { class: 'control' },
-        textarea(
-          {
-            class: ['module', 'javascript'],
-            name: `${api.functionName}-module`,
-            spellcheck: false
-          },
-          api.module
-        )
-      ),
-      div(
-        { class: 'control' },
-        button({ name: `${api.functionName}-name` }, 'Run!')
-      )
-    ),
-    fieldset(legend('Output'), div('OUTPUT'))
+    ...guts
   );
 }
 

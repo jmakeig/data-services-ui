@@ -1,5 +1,9 @@
 xdmp.securityAssert('http://marklogic.com/data-services-console', 'execute');
 
+// FIXME: Total hack to provide component dependencies.
+//        This really needs to be assembled in a build step.
+//        That will also allow the browser code to managed outside
+//        of the main source tree.
 const {
   header,
   nav,
@@ -19,7 +23,9 @@ const {
   label,
   span,
   a
-} = require('./lib/dom-helper.sjs');
+} = require('../lib/dom-helper.sjs');
+
+const { Nav, Service } = require('./components/components.js');
 const { getServices } = require('./lib/getServices.sjs');
 
 const serviceName = xdmp.getRequestField('service');
@@ -52,94 +58,6 @@ xdmp.setResponseEncoding('UTF-8');
 
 const services = getServices();
 
-function renderService(service, name) {
-  return section(
-    { class: 'service', id: service },
-    a({ href: `dataServices.sjs?service=${name}` }, h2(name)),
-    header(
-      form(
-        { method: 'get', action: `newEndpoint.sjs` },
-        input({ type: 'hidden', name: 'service', value: name }),
-        button({ type: 'submit' }, '+ New Endpoint')
-      )
-    ),
-    ...service.apis.map(api => renderEndpoint(api, name))
-  );
-}
-
-function renderEndpoint(api, forService) {
-  return section(
-    { class: 'endpoint', id: api.functionName },
-    a(
-      {
-        href: `dataServices.sjs?service=${forService}&endpoint=${
-          api.functionName
-        }`
-      },
-      h3(api.functionName)
-    ),
-    fieldset(
-      legend(api.functionName),
-      ol(
-        { class: 'params-list', start: 0 },
-        ...api.params.map(param =>
-          renderParam(param, api.functionName, forService)
-        )
-      )
-    ),
-    fieldset(
-      legend('Endpoint Implementation'),
-      div(
-        { class: 'control' },
-        textarea(
-          {
-            class: ['module javascript'],
-            name: `${api.functionName}-module`,
-            spellcheck: false
-          },
-          api.module
-        )
-      ),
-      div(
-        { class: 'control' },
-        button({ name: `${api.functionName}-name` }, 'Run!')
-      )
-    ),
-    fieldset(legend('Output'), div('OUTPUT'))
-  );
-}
-
-function renderParam(param, forAPI, forService) {
-  return li(
-    { class: ['control', 'input'] },
-    label({ for: param.name }, param.name),
-    input({ name: param.name, id: param.name, style: 'width: 20em;' }),
-    span({ class: ['param-type'] }, param.datatype)
-  );
-}
-
-function renderNav(services) {
-  function url(s, e) {
-    const u = `dataServices.sjs?service=${s}`;
-    if (!e) return u;
-    return `${u}&endpoint=${e}`;
-  }
-  return nav(
-    ul(
-      ...Object.keys(services).map(service =>
-        li(
-          a({ href: url(service) }, service),
-          ul(
-            ...services[service].apis.map(api =>
-              li(a({ href: url(service, api.functionName) }, api.functionName))
-            )
-          )
-        )
-      )
-    )
-  );
-}
-
 `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -163,8 +81,8 @@ function renderNav(services) {
   </head>
   <body>
     <header><button>+ New Service</button></header>
-    ${renderNav(services)}
-    ${renderService(services[serviceName], serviceName)}
+    ${Nav(services)}
+    ${Service(services[serviceName], serviceName)}
     <script type="application/javascript" src="./browser/editor.js"></script>
   </body>
 </html>

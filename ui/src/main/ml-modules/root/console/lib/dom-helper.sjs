@@ -112,8 +112,3 @@ exports.file = (...p) => element('input', { type: 'file' }, ...p);
 
 exports.br = (...p) => element('br', ...p);
 exports.hr = (...p) => element('hr', ...p);
-// div(
-//   h1('asdf', { className: 'special', aria: 'eeee' }, button()),
-//   div('qwer', { className: ['another', 'rrrr'] }),
-//   input({ id: 'ASDF' })
-// );

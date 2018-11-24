@@ -1,5 +1,15 @@
 'use strict';
 
+function exists(item) {
+  return !('undefined' === typeof item || null === item);
+}
+function isEmpty(item) {
+  return !exists(item) || '' === item;
+}
+function notEmpty(item) {
+  return !isEmpty(item);
+}
+
 function element(name, ...properties) {
   let attributes = {};
   let children = [];
@@ -10,7 +20,9 @@ function element(name, ...properties) {
         case 'class':
         case 'className':
           return `class="${
-            Array.isArray(attr[key]) ? attr[key].join(' ') : attr[key]
+            Array.isArray(attr[key])
+              ? attr[key].filter(notEmpty).join(' ')
+              : attr[key]
           }"`;
         //case 'dataset':
         //  Object.keys(attr[key]).map

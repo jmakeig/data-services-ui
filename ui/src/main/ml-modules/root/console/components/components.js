@@ -49,7 +49,10 @@ function Endpoint(api, forService, isSelected) {
       ]
     : [];
   return section(
-    { class: 'endpoint', id: api.functionName },
+    {
+      class: ['endpoint', isSelected ? 'selected' : undefined],
+      id: api.functionName
+    },
     a(
       {
         href: `dataServices.sjs?service=${forService}&endpoint=${
@@ -93,8 +96,8 @@ function Nav(services) {
   );
 }
 
+// FIXME: Conditional export only for MarkLogic rendering. Ugly!
 try {
-  // FIXME: UGLY!
   exports.Nav = Nav;
   exports.Service = Service;
   exports.Endpoint = Endpoint;

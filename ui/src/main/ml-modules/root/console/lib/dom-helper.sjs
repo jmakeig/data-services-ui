@@ -136,6 +136,7 @@ exports.checkbox = (...p) => element('input', { type: 'checkbox' }, ...p);
 exports.radio = (...p) => element('input', { type: 'radio' }, ...p);
 exports.select = (...p) => element('select', ...p);
 exports.option = (...p) => element('option', ...p);
+exports.optgroup = (...p) => element('optgroup', ...p);
 exports.file = (...p) => element('input', { type: 'file' }, ...p);
 
 exports.br = (...p) => element('br', ...p);

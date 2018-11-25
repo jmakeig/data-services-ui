@@ -20,6 +20,9 @@ const {
   input,
   button,
   textarea,
+  select,
+  option,
+  optgroup,
   label,
   span,
   a

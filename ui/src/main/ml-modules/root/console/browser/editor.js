@@ -84,7 +84,19 @@ function reducer(prev, action) {
       return prev;
   }
 }
-const store = Redux.createStore(reducer, initialModel);
+
+const logger = store => next => action => {
+  console.log('Dispatching', action);
+  let result = next(action);
+  console.log('Next', store.getState());
+  return result;
+};
+
+const store = Redux.createStore(
+  reducer,
+  initialModel,
+  Redux.applyMiddleware(logger)
+);
 
 // HACK: Blur and focus events need to happen in separate event loops
 store.subscribe(() => () => setTimeout(render, 0));

@@ -30,7 +30,7 @@ const model = {
               { name: 'frequency', datatype: 'unsignedLong' }
             ],
             return: { datatype: 'string' },
-            module: '\'use static\'';
+            module: '\'use strict\'';
           }
         ]
       }
@@ -42,12 +42,9 @@ const model = {
 function reducer(prev, action) {
   // console.log(action.type, action.data);
   function changeEndpointModule({ module }) {
-    // console.log(module);
     const newModel = copy(prev);
     newModel.services = copy(newModel.services);
-    // console.log('48', newModel);
     newModel.services[prev.service] = copy(newModel.services[prev.service]);
-    // console.log('50', newModel);
     newModel.services[prev.service].apis = newModel.services[
       prev.service
     ].apis.map(api => {
@@ -57,7 +54,6 @@ function reducer(prev, action) {
         return api;
       }
     });
-    // console.log('60', newModel);
     return newModel;
   }
 
@@ -116,18 +112,15 @@ function wireModuleEditor() {
     inputStyle: 'contenteditable'
   });
 
-  editor.on(
-    'change',
-    debounce(change => {
-      // console.log(editor.getValue());
-      store.dispatch({
-        type: CHANGE_ENDPOINT_MODULE,
-        data: {
-          module: editor.getValue()
-        }
-      });
-    })
-  );
+  editor.on('blur', (instance, event) => {
+    // console.log('blur', editor.getValue());
+    store.dispatch({
+      type: CHANGE_ENDPOINT_MODULE,
+      data: {
+        module: editor.getValue()
+      }
+    });
+  });
 }
 
 /**

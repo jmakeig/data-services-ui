@@ -10,6 +10,11 @@ function notEmpty(item) {
   return !isEmpty(item);
 }
 
+/** https://gist.github.com/youssman/745578062609e8acac9f#gistcomment-1973681 */
+function camelCaseToDash(str) {
+  return str.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').toLowerCase();
+}
+
 function element(name, ...properties) {
   let attributes = {};
   let children = [];
@@ -24,8 +29,16 @@ function element(name, ...properties) {
               ? attr[key].filter(notEmpty).join(' ')
               : attr[key]
           }"`;
-        //case 'dataset':
-        //  Object.keys(attr[key]).map
+        // case 'dataset':
+        // case 'style':
+        case 'style':
+          const css = Object.keys(attr[key])
+            .map(k => `${camelCaseToDash(k)}: ${attr[key][k]}`)
+            .join('; ');
+          return `style="${css}"`;
+        case 'for':
+        case 'htmlFor':
+          return `for="${attr[key]}"`;
         default:
           return `${key}="${attr[key]}"`;
       }

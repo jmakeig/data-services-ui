@@ -111,12 +111,7 @@ function Param(param, index, forAPI, forService) {
       style: { width: '20em' }
     }),
     null === param.datatype
-      ? input({
-          class: ['param-datatype'],
-          dataset: {
-            index
-          }
-        })
+      ? ParamDatatype(index)
       : span({ class: ['param-datatype'] }, param.datatype),
     // button({ class: ['parm-edit'], title: 'Delete param' }, '✐'),
     button(

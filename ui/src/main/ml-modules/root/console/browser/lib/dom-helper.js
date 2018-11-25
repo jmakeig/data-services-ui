@@ -1,138 +1,51 @@
 /**
- * Whether something is iterable, not including `string` instances.
  *
- * @param {*} item
- * @param {boolean} [ignoreStrings = true]
- * @return {boolean}
- */
-function isIterable(item, ignoreStrings = true) {
-  if (!exists(item)) return false;
-  if ('function' === typeof item[Symbol.iterator]) {
-    return 'string' !== typeof item || !ignoreStrings;
-  }
-  return false;
-}
-/**
- * Whether something is not `undefined` or `null`
- *
- * @param {*} item
- * @return {boolean}
- */
-function exists(item) {
-  return !('undefined' === typeof item || null === item);
-}
-/**
- * Whether something doesn’t exist or is *not* an empty `string`
- *
- * @param {*} item
- * @return {boolean}
- */
-function isEmpty(item) {
-  return !exists(item) || '' === item;
-}
-/**
- * Guarantees an interable, even if passed a non-iterable,
- * except for `undefined` and `null`, which are returned as-is.
- *
- * @param {*} oneOrMany
- * @return {Iterable|Array|null|undefined}
- */
-function toIterable(oneOrMany) {
-  if (!exists(oneOrMany)) return oneOrMany;
-  if (isIterable(oneOrMany)) return oneOrMany;
-  return [oneOrMany];
-}
-
-/**
- * Creates a `Node` instance.
- *
- * @param {Node|string|null|undefined} name
+ * @param {String|null|Node} name
+ * @param  {...Node|Object|String} children
  * @return {Node}
  */
-function createElement(name) {
+function element(name, ...children) {
+  if (null === name) return document.createDocumentFragment();
   if (name instanceof Node) return name;
-  if (isEmpty(name)) return document.createDocumentFragment();
-  return document.createElement(String(name));
-}
-
-/**
- *
- * @param {Iterable|Node|string|Object} param
- * @param {Node} el
- * @return {Node}
- */
-function applyToElement(param, el) {
-  if (isIterable(param)) {
-    for (const item of param) {
-      applyToElement(item, el);
-    }
-    return el;
-  }
-
-  if (param instanceof Node) {
-    el.appendChild(param);
-    return el;
-  }
-
-  switch (typeof param) {
-    case 'string':
-    case 'number':
-    case 'boolean':
-      el.appendChild(document.createTextNode(String(param)));
-      return el;
-    case 'object':
-      if (null === param) {
-        el.appendChild(document.createTextNode(String(param)));
-        return el;
-      }
-  }
-
-  if (exists(param) && 'object' === typeof param) {
-    for (const p of [
-      ...Object.getOwnPropertyNames(param),
-      ...Object.getOwnPropertySymbols(param)
-    ]) {
-      switch (p) {
-        case 'style':
-        case 'dataset':
-          for (let item in param[p]) {
-            if (exists(item)) el[p][item] = param[p][item];
+  const el = document.createElement(String(name));
+  for (const child of children) {
+    switch (typeof child) {
+      case 'string':
+      case 'number':
+      case 'boolean':
+        el.appendChild(document.createTextNode(child));
+        break;
+      case 'object':
+        if (null === child) break;
+        else if (child instanceof Node) {
+          el.appendChild(child);
+        } else {
+          for (let p in child) {
+            switch (p) {
+              case 'style':
+              case 'dataSet':
+                const set = child[p];
+                for (let item in set) {
+                  el[p][item] = set[item];
+                }
+                break;
+              case 'classList':
+                el.classList.add(...child[p]);
+                break;
+              case 'for':
+                el.htmlFor = child[p];
+                break;
+              default:
+                el[p] = child[p];
+            }
           }
-          break;
-        case 'class':
-        case 'className':
-        case 'classList':
-          for (const cls of toIterable(param[p])) {
-            if (exists(cls)) el.classList.add(cls);
-          }
-          break;
-        case 'for':
-        case 'htmlFor':
-          el.htmlFor = param[p];
-          break;
-        default:
-          el[p] = param[p];
-      }
+        }
     }
   }
   return el;
 }
 
-/**
- *
- * @param {string|Node|undefined|null} name
- * @param {Iterable} rest
- * @return {Node}
- */
-function element(name, ...rest) {
-  const el = createElement(name);
-  for (const param of rest) {
-    applyToElement(param, el);
-  }
-  return el;
-}
-
-const toFragment = (...rest) => element(null, ...rest);
+const toFragment = (...p) => element(null, ...p);
 const empty = () => toFragment();
 
 const head = (...p) => element('head', ...p);

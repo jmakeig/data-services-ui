@@ -24,8 +24,7 @@ body {
 
 textarea,
 input {
-  border: solid 1px #ddd;
-
+  /*border: solid 1px #ddd;*/
   font-size: 1em;
 }
 input[type=text],
@@ -37,6 +36,8 @@ input[type=number] {
 /**************************************************/
 section {
   margin: 1em 0;
+
+  border-top: solid 0.5px #ddd;
 }
 fieldset {
   margin: 1em 0;
@@ -74,13 +75,35 @@ textarea.module {
   line-height: 1.55;
 }
 
-textarea.module {
+textarea.module,
+.param-value,
+{
   font-family: 'SF Mono', 'Inconsolata', 'Consolas', monospace;
 }
 
-.param-datatype:before {
-  content: '(';
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
 }
-.param-datatype:after {
-  content: ')';
+th,
+td {
+  padding: 0.5em;
+
+  border: solid 0.5px #ddd;
+
+  text-align: left;
+}
+tbody th {
+  font-weight: normal;
+}
+
+.param-datatype-long,
+.param-datatype-decimal,
+.param-datatype-double,
+.param-datatype-float,
+.param-datatype-int,
+.param-datatype-long,
+.param-datatype-unsignedInt,
+.param-datatype-unsignedLong {
+  text-align: right;
 }

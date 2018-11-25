@@ -29,7 +29,7 @@ function element(name, ...properties) {
               ? attr[key].filter(notEmpty).join(' ')
               : attr[key]
           }"`;
-        case 'dataSet':
+        case 'dataset':
           return Object.keys(attr[key])
             .map(k => `data-${k}="${attr[key][k]}"`)
             .join(' ');
@@ -43,7 +43,7 @@ function element(name, ...properties) {
         case 'htmlFor':
           return `for="${attr[key]}"`;
         default:
-          return `${key}="${attr[key]}"`;
+          return `${key.toLowerCase()}="${attr[key]}"`;
       }
     }
 

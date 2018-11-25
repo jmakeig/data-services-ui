@@ -83,9 +83,14 @@ function Params(params, forAPI, forService) {
   return fieldset(
     { id: `Params-${forService}-${forAPI}` },
     legend('Input Params'),
-    ol(
-      { class: 'params-list', start: 0 },
-      ...params.map((param, index) => Param(param, index, forAPI, forService))
+    table(
+      { class: 'params-list' },
+      thead(
+        tr(th(), th('Name'), th('Datatype'), th('Value'), th({ colSpan: 2 }))
+      ),
+      tbody(
+        ...params.map((param, index) => Param(param, index, forAPI, forService))
+      )
     ),
     div(
       { class: 'control' },
@@ -95,36 +100,69 @@ function Params(params, forAPI, forService) {
 }
 
 function Param(param, index, forAPI, forService) {
-  return li(
-    { class: ['control', 'input'] },
-    null === param.name
-      ? input({
-          class: ['param-name'],
-          dataset: {
-            index
-          }
-        })
-      : label({ class: ['param-name'], for: param.name }, param.name),
-    input({
-      name: param.name,
-      id: param.name,
-      style: { width: '20em' }
-    }),
-    null === param.datatype
-      ? ParamDatatype(index)
-      : span({ class: ['param-datatype'] }, param.datatype),
-    // button({ class: ['parm-edit'], title: 'Delete param' }, '✐'),
-    button(
-      {
-        class: ['param-remove'],
-        title: 'Delete param'
-      },
-      '-'
+  return tr(
+    td(`${index}.`),
+    th(
+      { class: ['param-name'] },
+      null === param.name
+        ? input({
+            class: ['param-name'],
+            dataset: {
+              index
+            }
+          })
+        : label({ for: param.name }, param.name)
     ),
-    null === param.name || null === param.datatype
-      ? button({ class: ['param-save'], dataset: { index } }, 'Save')
-      : ''
+    td(
+      { class: ['param-datatype'] },
+      null === param.datatype ? ParamDatatype(index) : param.datatype
+    ),
+    td(ParamValue(param)),
+
+    td(
+      button(
+        {
+          class: ['param-remove'],
+          title: 'Delete param'
+        },
+        '-'
+      )
+    ),
+    td(
+      null === param.name || null === param.datatype
+        ? button({ class: ['param-save'], dataset: { index } }, 'Save')
+        : ''
+    )
   );
+}
+
+function ParamValue({
+  name,
+  datatype,
+  desc,
+  nullable = false,
+  multiple = false
+}) {
+  switch (datatype) {
+    case 'boolean':
+      return select(
+        nullable ? option({ value: 'null' }, '—') : undefined,
+        option('false'),
+        option('true')
+      );
+    case 'array':
+    case 'object':
+    case 'jsonDocument':
+    case 'textDocument':
+    case 'xmlDocument':
+      return textarea();
+    default:
+      return input({
+        name: `${name}-value`,
+        style: { width: '20em' },
+        class: [`param-value`, `param-datatype-${datatype}`]
+      });
+  }
 }
 
 function ParamDatatype(index) {

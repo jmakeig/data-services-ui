@@ -15,6 +15,31 @@ function Service(service, name, selectedEndpoint) {
   );
 }
 
+// function shallowEqual(a, b) {
+//   if (a.length !== b.length) {
+//     return false;
+//   }
+//   for (let i = 0; i < a.length; i++) {
+//     if (a[i] !== b[i]) return false;
+//   }
+//   return true;
+// }
+
+// function memo(fct) {
+//   let lastParams = [],
+//     lastReturn;
+
+//   return function _memo(...params) {
+//     if (shallowEqual(lastParams, params)) {
+//       console.info('Returned cached value', fct.name);
+//       return lastReturn;
+//     }
+//     lastParams = params;
+//     lastReturn = fct(...params);
+//     return lastReturn;
+//   };
+// }
+
 function Endpoint(api, forService, isSelected) {
   const guts = isSelected
     ? [

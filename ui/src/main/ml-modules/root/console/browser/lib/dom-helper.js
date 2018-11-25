@@ -23,14 +23,16 @@ function element(name, ...children) {
           for (let p in child) {
             switch (p) {
               case 'style':
-              case 'dataSet':
+              case 'dataset':
                 const set = child[p];
                 for (let item in set) {
                   el[p][item] = set[item];
                 }
                 break;
+              case 'class':
               case 'classList':
-                el.classList.add(...child[p]);
+                const classes = [].concat(child[p]);
+                el.classList.add(...classes);
                 break;
               case 'for':
                 el.htmlFor = child[p];

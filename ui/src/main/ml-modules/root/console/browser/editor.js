@@ -233,9 +233,10 @@ document.addEventListener('click', evt => {
     const name = document.querySelector(
       `input.param-name[data-index="${index}"]`
     ).value;
-    const datatype = document.querySelector(
-      `input.param-datatype[data-index="${index}"]`
-    ).value;
+    const sel = document.querySelector(
+      `select.param-datatype[data-index="${index}"]`
+    );
+    const datatype = sel.options[sel.selectedIndex].text;
     store.dispatch({
       type: UPDATE_ENDPOINT_PARAM,
       data: { index, name, datatype }

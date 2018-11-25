@@ -132,6 +132,47 @@ function Param(param, index, forAPI, forService) {
   );
 }
 
+function ParamDatatype(index) {
+  return select(
+    {
+      class: ['param-datatype'],
+      dataset: {
+        index
+      }
+    },
+    optgroup(
+      { label: 'Atomics' },
+      ...[
+        'boolean',
+        'date',
+        'dateTime',
+        'dayTimeDuration',
+        'decimal',
+        'double',
+        'float',
+        'int',
+        'long',
+        'string',
+        'time',
+        'unsignedInt',
+        'unsignedLong'
+      ]
+        .sort()
+        .map(atomic => option({ value: atomic }, atomic))
+    ),
+    optgroup(
+      { label: 'Nodes' },
+      ...[
+        'array',
+        'object',
+        'binaryDocument',
+        'jsonDocument',
+        'textDocument',
+        'xmlDocument'
+      ].map(node => option({ value: node }, node))
+    )
+  );
+}
 function Nav(services) {
   function url(s, e) {
     const u = `dataServices.sjs?service=${s}`;

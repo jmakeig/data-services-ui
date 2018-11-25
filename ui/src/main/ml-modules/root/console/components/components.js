@@ -32,10 +32,7 @@ function Endpoint(api, forService, isSelected) {
               api.module
             )
           ),
-          div(
-            { class: 'control' },
-            button({ name: `${api.functionName}-name` }, 'Run!')
-          )
+          div({ class: 'control' }, button({ id: `Run` }, 'Run!'))
         ),
         fieldset(legend('Output'), div('OUTPUT'))
       ]
@@ -75,11 +72,13 @@ function Params(params, forAPI, forService) {
 function Param(param, forAPI, forService) {
   return li(
     { class: ['control', 'input'] },
-    null === param.name ? input() : label({ for: param.name }, param.name),
-    input({ name: param.name, id: param.name, style: 'width: 20em;' }),
-    null === param.datatype
-      ? input()
-      : span({ class: ['param-type'] }, param.datatype),
+    label({ for: param.name }, param.name),
+    input({
+      name: param.name,
+      id: param.name,
+      style: { width: '20em' }
+    }),
+    span({ class: ['param-type'] }, param.datatype),
     // button({ class: ['parm-edit'], title: 'Delete param' }, '✐'),
     button(
       {

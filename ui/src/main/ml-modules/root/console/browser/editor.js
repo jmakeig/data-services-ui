@@ -6,6 +6,7 @@ function copy(obj, ...others) {
 }
 
 const CHANGE_ENDPOINT_MODULE = 'CHANGE_ENDPOINT_MODULE';
+const SAVE_ENDPOINT_INTENT = 'SAVE_ENDPOINT_INTENT';
 const ADD_ENDPOINT_PARAM = 'ADD_ENDPOINT_PARAM';
 const UPDATE_ENDPOINT_PARAM = 'UPDATE_ENDPOINT_PARAM';
 const DELETE_ENDPOINT_PARAM = 'DELETE_ENDPOINT_PARAM';
@@ -40,19 +41,23 @@ const model = {
 
 function reducer(prev, action) {
   // console.log(action.type, action.data);
-  function changeEndpointModule({ service, endpoint, module }) {
+  function changeEndpointModule({ module }) {
+    // console.log(module);
     const newModel = copy(prev);
     newModel.services = copy(newModel.services);
-    newModel.services[service] = copy(newModel.services[service]);
-    newModel.services[service].apis = newModel.services[service].apis.map(
-      api => {
-        if (endpoint === api.functionName) {
-          return copy(api, { module });
-        } else {
-          return api;
-        }
+    // console.log('48', newModel);
+    newModel.services[prev.service] = copy(newModel.services[prev.service]);
+    // console.log('50', newModel);
+    newModel.services[prev.service].apis = newModel.services[
+      prev.service
+    ].apis.map(api => {
+      if (prev.endpoint === api.functionName) {
+        return copy(api, { module });
+      } else {
+        return api;
       }
-    );
+    });
+    // console.log('60', newModel);
     return newModel;
   }
 
@@ -75,12 +80,10 @@ function reducer(prev, action) {
   }
 
   switch (action.type) {
-    case CHANGE_ENDPOINT_MODULE: {
+    case CHANGE_ENDPOINT_MODULE:
       return changeEndpointModule(action.data);
-    }
     case ADD_ENDPOINT_PARAM:
       return addEndpointParam(prev.service, prev.endpoint);
-      return prev;
     default:
       return prev;
   }
@@ -116,25 +119,13 @@ function wireModuleEditor() {
   editor.on(
     'change',
     debounce(change => {
-      const state = store.getState();
       // console.log(editor.getValue());
       store.dispatch({
         type: CHANGE_ENDPOINT_MODULE,
         data: {
-          service: state.service,
-          endpoint: state.endpoint,
           module: editor.getValue()
         }
       });
-
-      // FIXME: This needs to be in a thunk
-      save(
-        selectCurrentEndpoint(store.getState()).module,
-        state.service,
-        state.endpoint
-      )
-        .then(response => console.info(response))
-        .catch(err => console.error(err));
     })
   );
 }
@@ -170,19 +161,20 @@ function queryString(params) {
  * @param {String} [tpye = 'sjs']
  * @return {Promise}
  */
-function save(module, service, endpoint, type = 'sjs') {
+function saveEndpoint(endpoint, forService) {
   return new Promise(function(resolve, reject) {
-    var xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.open(
       'POST',
-      './saveEndpoint.sjs?' + queryString({ service, endpoint, type })
+      './saveEndpoint.sjs?' +
+        queryString({ service: forService, endpoint: endpoint.functionName })
     );
     xhr.onload = function() {
       if (this.status < 300) {
         // resolve(JSON.parse(this.responseText));
         resolve(this.responseText);
       } else if (this.status >= 300) {
-        let error = new Error(this.responseText);
+        const error = new Error(this.responseText);
         error.httpStatus = this.statusText;
         error.httpCode = this.status;
         reject(error);
@@ -191,7 +183,8 @@ function save(module, service, endpoint, type = 'sjs') {
     xhr.ontimeout = xhr.onabort = xhr.onerror = function(evt) {
       reject(new Error('Network Error'));
     };
-    xhr.send(module);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify(endpoint));
   });
 }
 
@@ -217,6 +210,11 @@ document.addEventListener('click', evt => {
     //
   } else if (evt.target.matches('button.param-add')) {
     store.dispatch({ type: ADD_ENDPOINT_PARAM });
+  } else if (evt.target.matches('#Run')) {
+    const model = store.getState();
+    saveEndpoint(selectCurrentEndpoint(model), model.service)
+      .then(response => console.info(response))
+      .catch(err => console.error(err));
   }
 });
 

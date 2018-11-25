@@ -1,16 +1,13 @@
 xdmp.securityAssert('http://marklogic.com/data-services-console', 'execute');
 
-const { updateModule } = require('./lib/updateModule.sjs');
+const { updateEndpoint } = require('./lib/updateEndpoint.sjs');
 
-const service = xdmp.getRequestField('service');
-const endpoint = xdmp.getRequestField('endpoint');
-const type = xdmp.getRequestField('type');
-const moduleBody = xdmp.getRequestBody('text');
+const forService = xdmp.getRequestField('service');
+const endpoint = JSON.parse(xdmp.getRequestBody('text'));
+const code = endpoint.module;
+delete endpoint.module;
 
-xdmp.setResponseOutputMethod('text');
-xdmp.setResponseContentType('text/plain');
+xdmp.setResponseContentType('application/json');
 xdmp.setResponseEncoding('UTF-8');
-xdmp.setResponseCode(201, 'Updated');
 
-updateModule(moduleBody, service, endpoint, type);
-('Done');
+updateEndpoint(forService, endpoint, code);

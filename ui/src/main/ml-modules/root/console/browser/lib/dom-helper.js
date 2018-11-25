@@ -90,7 +90,7 @@ function applyToElement(param, el) {
   if (exists(param) && 'object' === typeof param) {
     for (const p of [
       ...Object.getOwnPropertyNames(param),
-      ...Object.getOwnPropertySymbols(param),
+      ...Object.getOwnPropertySymbols(param)
     ]) {
       switch (p) {
         case 'style':
@@ -105,6 +105,10 @@ function applyToElement(param, el) {
           for (const cls of toIterable(param[p])) {
             if (exists(cls)) el.classList.add(cls);
           }
+          break;
+        case 'for':
+        case 'htmlFor':
+          el.htmlFor = param[p];
           break;
         default:
           el[p] = param[p];

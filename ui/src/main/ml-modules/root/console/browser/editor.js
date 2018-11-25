@@ -40,7 +40,6 @@ const model = {
 */
 
 function reducer(prev, action) {
-  // console.log(action.type, action.data);
   function changeEndpointModule({ module }) {
     const newModel = copy(prev);
     newModel.services = copy(newModel.services);
@@ -99,7 +98,11 @@ const store = Redux.createStore(
 );
 
 // HACK: Blur and focus events need to happen in separate event loops
-store.subscribe(() => () => setTimeout(render, 0));
+// store.subscribe(() => () => {
+//   console.log('About to render');
+//   setTimeout(render, 0);
+// });
+store.subscribe(render);
 
 /**
  * Given the state, get the current endpoint

@@ -64,7 +64,7 @@ function reducer(prev, action) {
       api => {
         if (endpoint === api.functionName) {
           const newAPI = copy(api);
-          newAPI.params = copy(newAPI.params, [{ name: null, datatype: null }]);
+          newAPI.params = copy(newAPI.params, { name: null, datatype: null });
           return newAPI;
         } else {
           return api;
@@ -74,11 +74,33 @@ function reducer(prev, action) {
     return newModel;
   }
 
+  function updateEndpointParam({ index, name, datatype }) {
+    console.log(name);
+    const newModel = copy(prev);
+    newModel.services = copy(newModel.services);
+    newModel.services[prev.service] = copy(newModel.services[prev.service]);
+    newModel.services[prev.service].apis = newModel.services[
+      prev.service
+    ].apis.map(api => {
+      if (prev.endpoint === api.functionName) {
+        const newAPI = copy(api);
+        newAPI.params = copy(newAPI.params);
+        newAPI.params[index] = copy(newAPI.params[index], { name, datatype });
+        return newAPI;
+      } else {
+        return api;
+      }
+    });
+    return newModel;
+  }
+
   switch (action.type) {
     case CHANGE_ENDPOINT_MODULE:
       return changeEndpointModule(action.data);
     case ADD_ENDPOINT_PARAM:
       return addEndpointParam(prev.service, prev.endpoint);
+    case UPDATE_ENDPOINT_PARAM:
+      return updateEndpointParam(action.data);
     default:
       return prev;
   }
@@ -198,28 +220,23 @@ function saveEndpoint(endpoint, forService) {
   });
 }
 
-/** @see https://davidwalsh.name/javascript-debounce-function */
-function debounce(func, wait = 250, immediate = false) {
-  let timeout;
-  return function _debounceInner() {
-    const context = this,
-      args = arguments;
-    function later() {
-      timeout = null;
-      if (!immediate) func.apply(context, args);
-    }
-    let callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
-  };
-}
-
 document.addEventListener('click', evt => {
   if (evt.target.matches('button.param-remove')) {
     //
   } else if (evt.target.matches('button.param-add')) {
     store.dispatch({ type: ADD_ENDPOINT_PARAM });
+  } else if (evt.target.matches('button.param-save')) {
+    const index = evt.target.dataset.index;
+    const name = document.querySelector(
+      `input.param-name[data-index="${index}"]`
+    ).value;
+    const datatype = document.querySelector(
+      `input.param-datatype[data-index="${index}"]`
+    ).value;
+    store.dispatch({
+      type: UPDATE_ENDPOINT_PARAM,
+      data: { index, name, datatype }
+    });
   } else if (evt.target.matches('#Run')) {
     const model = store.getState();
     saveEndpoint(selectCurrentEndpoint(model), model.service)

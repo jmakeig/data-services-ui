@@ -85,7 +85,7 @@ function Params(params, forAPI, forService) {
     legend('Input Params'),
     ol(
       { class: 'params-list', start: 0 },
-      ...params.map(param => Param(param, forAPI, forService))
+      ...params.map((param, index) => Param(param, index, forAPI, forService))
     ),
     div(
       { class: 'control' },
@@ -94,16 +94,30 @@ function Params(params, forAPI, forService) {
   );
 }
 
-function Param(param, forAPI, forService) {
+function Param(param, index, forAPI, forService) {
   return li(
     { class: ['control', 'input'] },
-    label({ for: param.name }, param.name),
+    null === param.name
+      ? input({
+          class: ['param-name'],
+          dataset: {
+            index
+          }
+        })
+      : label({ class: ['param-name'], for: param.name }, param.name),
     input({
       name: param.name,
       id: param.name,
       style: { width: '20em' }
     }),
-    span({ class: ['param-type'] }, param.datatype),
+    null === param.datatype
+      ? input({
+          class: ['param-datatype'],
+          dataset: {
+            index
+          }
+        })
+      : span({ class: ['param-datatype'] }, param.datatype),
     // button({ class: ['parm-edit'], title: 'Delete param' }, '✐'),
     button(
       {
@@ -111,7 +125,10 @@ function Param(param, forAPI, forService) {
         title: 'Delete param'
       },
       '-'
-    )
+    ),
+    null === param.name || null === param.datatype
+      ? button({ class: ['param-save'], dataset: { index } }, 'Save')
+      : ''
   );
 }
 

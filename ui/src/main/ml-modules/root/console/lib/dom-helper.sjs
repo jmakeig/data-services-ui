@@ -29,7 +29,10 @@ function element(name, ...properties) {
               ? attr[key].filter(notEmpty).join(' ')
               : attr[key]
           }"`;
-        // case 'dataset':
+        case 'dataSet':
+          return Object.keys(attr[key])
+            .map(k => `data-${k}="${attr[key][k]}"`)
+            .join(' ');
         // case 'style':
         case 'style':
           const css = Object.keys(attr[key])

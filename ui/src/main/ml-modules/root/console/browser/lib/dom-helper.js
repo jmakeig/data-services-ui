@@ -185,6 +185,7 @@ const checkbox = (...p) => element('input', { type: 'checkbox' }, ...p);
 const radio = (...p) => element('input', { type: 'radio' }, ...p);
 const select = (...p) => element('select', ...p);
 const option = (...p) => element('option', ...p);
+const optgroup = (...p) => element('optgroup', ...p);
 const file = (...p) => element('input', { type: 'file' }, ...p);
 
 const br = (...p) => element('br', ...p);

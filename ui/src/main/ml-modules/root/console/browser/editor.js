@@ -24,11 +24,14 @@ const model = {
         },
         apis: [
           {
+            // desc
             functionName: 'whatsUp',
             params: [
+              // name, desc, datatype, nullable, and multiple
               { name: 'greeting', datatype: 'string' },
               { name: 'frequency', datatype: 'unsignedLong' }
             ],
+            // desc, datatype, nullable, and multiple
             return: { datatype: 'string' },
             module: '\'use strict\'';
           }
